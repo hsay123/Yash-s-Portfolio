@@ -258,6 +258,89 @@
 
 <body class="text-neo-black font-display antialiased selection:bg-neo-black selection:text-neo-yellow">
 
+    <!-- BOOT SCREEN -->
+    <div id="boot-screen">
+        <style>
+            #boot-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                z-index: 9999;
+                background: #0a0a0a;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: transform 600ms ease-in;
+                font-family: inherit;
+            }
+            #boot-screen * {
+                font-family: "JetBrains Mono", monospace;
+            }
+            #boot-screen::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    #000 2px,
+                    #000 4px
+                );
+                opacity: 0.04;
+                pointer-events: none;
+            }
+            #boot-screen .boot-terminal {
+                width: 90%;
+                max-width: 800px;
+                text-align: left;
+                color: #33FF57;
+                position: relative;
+                z-index: 10001;
+            }
+            #boot-screen .boot-cursor {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+                font-weight: bold;
+                animation: boot-blink 1s step-end infinite;
+            }
+            @keyframes boot-blink {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0; }
+            }
+            #boot-screen .boot-line {
+                font-size: 1rem;
+                min-height: 1.5rem;
+                margin-bottom: 0.5rem;
+                white-space: pre-wrap;
+            }
+            #boot-flash {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: white;
+                opacity: 0;
+                pointer-events: none;
+                z-index: 10002;
+                transition: opacity 100ms ease-out;
+            }
+        </style>
+        
+        <div class="boot-terminal">
+            <div class="boot-cursor">&gt;_</div>
+            <div id="boot-text-container"></div>
+        </div>
+        <div id="boot-flash"></div>
+    </div>
+
     <div class="cursor-outer"></div>
     <div class="cursor-inner"></div>
 
@@ -1610,6 +1693,113 @@
         })();
     </script>
 
+    <!-- BOOT SCREEN SCRIPT -->
+    <script>
+        (function() {
+            if (sessionStorage.getItem('bootPlayed')) {
+                const bs = document.getElementById('boot-screen');
+                if (bs) bs.remove();
+                return;
+            }
+            
+            document.body.style.overflow = 'hidden';
+            window.scrollTo(0, 0);
+            
+            const lines = [
+                "> INITIALIZING YASH.exe...",
+                "> LOADING MODULES... [████████████] 100%",
+                "> SYSTEM STATUS: ONLINE",
+                "> WELCOME."
+            ];
+            
+            const container = document.getElementById('boot-text-container');
+            const bootScreen = document.getElementById('boot-screen');
+            const bootFlash = document.getElementById('boot-flash');
+            
+            if (!container || !bootScreen || !bootFlash) return;
+            
+            let currentLineIdx = 0;
+            
+            function typeLine(lineText, callback) {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'boot-line';
+                container.appendChild(lineDiv);
+                
+                if (lineText.includes("[████████████]")) {
+                    const prefix = "> LOADING MODULES... [";
+                    const suffix = "] 100%";
+                    const totalBars = 12;
+                    let charIdx = 0;
+                    
+                    const prefixInterval = setInterval(() => {
+                        lineDiv.textContent += prefix.charAt(charIdx);
+                        charIdx++;
+                        if (charIdx >= prefix.length) {
+                            clearInterval(prefixInterval);
+                            
+                            let currentBars = 0;
+                            const barInterval = setInterval(() => {
+                                currentBars++;
+                                lineDiv.textContent = prefix + "█".repeat(currentBars);
+                                
+                                if (currentBars >= totalBars) {
+                                    clearInterval(barInterval);
+                                    
+                                    let suffixIdx = 0;
+                                    const suffixInterval = setInterval(() => {
+                                        lineDiv.textContent += suffix.charAt(suffixIdx);
+                                        suffixIdx++;
+                                        if (suffixIdx >= suffix.length) {
+                                            clearInterval(suffixInterval);
+                                            setTimeout(callback, 200);
+                                        }
+                                    }, 40);
+                                }
+                            }, 40);
+                        }
+                    }, 40);
+                } else {
+                    let charIdx = 0;
+                    const interval = setInterval(() => {
+                        lineDiv.textContent += lineText.charAt(charIdx);
+                        charIdx++;
+                        if (charIdx >= lineText.length) {
+                            clearInterval(interval);
+                            setTimeout(callback, 200);
+                        }
+                    }, 40);
+                }
+            }
+            
+            function processLines() {
+                if (currentLineIdx < lines.length) {
+                    typeLine(lines[currentLineIdx], processLines);
+                    currentLineIdx++;
+                } else {
+                    setTimeout(() => {
+                        bootFlash.style.opacity = '0.3';
+                        
+                        setTimeout(() => {
+                            bootFlash.style.opacity = '0';
+                            
+                            setTimeout(() => {
+                                bootScreen.style.transform = 'translateY(-100%)';
+                                
+                                setTimeout(() => {
+                                    bootScreen.style.display = 'none';
+                                    bootScreen.remove();
+                                    document.body.style.overflow = '';
+                                    sessionStorage.setItem('bootPlayed', 'true');
+                                }, 600);
+                            }, 100);
+                        }, 100);
+                    }, 500);
+                }
+            }
+            
+            setTimeout(processLines, 500);
+        })();
+    </script>
 </body>
 
 </html>
