@@ -295,7 +295,9 @@
                 width: 100% !important;
                 min-width: 0 !important;
                 padding: 2.5rem 2rem !important;
-                background: rgba(20,20,20,0.85) !important;
+                background: rgba(20,20,20,0.25) !important;
+                border-right: none !important;
+                border-bottom: 1px solid rgba(255,255,255,0.06) !important;
             }
             .terminal-pane-avatar > div {
                 max-width: 180px !important;
@@ -426,7 +428,7 @@
             <!-- Terminal body: split panes -->
             <div class="terminal-body flex" style="min-height: 560px;">
                 <!-- LEFT PANEL: Avatar -->
-                <div class="terminal-pane-avatar relative flex flex-col items-center justify-center" style="width:34%; min-width:240px; background:rgba(20,20,20,0.85); padding: 3.5rem 2.5rem;">
+                <div class="terminal-pane-avatar relative flex flex-col items-center justify-center" style="width:34%; min-width:240px; background:rgba(20,20,20,0.25); padding: 3.5rem 2.5rem; border-right: 1px solid rgba(255,255,255,0.06);">
                     <div class="relative" style="max-width: 240px; width: 100%;">
                         <img src="assets/mockme.jpeg" alt="Yash Landge" class="w-full aspect-square object-cover object-center" style="border-radius:14px; border: 1.5px solid rgba(255,255,255,0.1);">
                         <span class="absolute font-mono text-[10px] text-white/80" style="top:10px; left:10px; background:rgba(255,42,42,0.85); padding:3px 8px; border-radius:5px; letter-spacing:0.04em;">AVATAR.JPG</span>
@@ -434,7 +436,7 @@
                 </div>
 
                 <!-- RIGHT PANEL: Terminal text -->
-                <div class="terminal-pane-text flex-1 flex flex-col justify-center font-mono leading-relaxed" style="padding: 3.5rem 3rem; background:rgba(13,13,13,0.88);">
+                <div class="terminal-pane-text flex-1 flex flex-col justify-center font-mono leading-relaxed" style="padding: 3.5rem 3rem;">
                     <div id="terminal-output" class="whitespace-pre-wrap"></div>
                     <span id="terminal-cursor" class="inline-block w-[10px] h-[18px] bg-neo-green animate-blink ml-0.5 align-middle"></span>
                 </div>
