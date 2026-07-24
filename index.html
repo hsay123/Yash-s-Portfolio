@@ -235,6 +235,69 @@
                 transform: translate(0)
             }
         }
+
+        /* Terminal window styles */
+        .terminal-window {
+            background: #0d0d0d;
+        }
+
+        .terminal-pane-text .term-prompt {
+            color: #A855F7;
+        }
+
+        .terminal-pane-text .term-cmd {
+            color: #38BDF8;
+        }
+
+        .terminal-pane-text .term-label {
+            color: #33FF57;
+        }
+
+        .terminal-pane-text .term-status-green {
+            color: #33FF57;
+            font-weight: 700;
+        }
+
+        .terminal-pane-text .term-dim {
+            color: #888;
+        }
+
+        .terminal-pane-text .term-white {
+            color: #e0e0e0;
+        }
+
+        .terminal-pane-text .term-cyan {
+            color: #22D3EE;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .animate-blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @media (max-width: 768px) {
+            .terminal-body {
+                flex-direction: column !important;
+            }
+            .terminal-pane-avatar {
+                width: 100% !important;
+                min-width: 0 !important;
+                border-right: none !important;
+                border-bottom: 1px solid #374151;
+                padding: 1.5rem !important;
+            }
+            .terminal-pane-avatar img {
+                max-width: 160px !important;
+            }
+            .terminal-pane-text {
+                padding: 1.25rem !important;
+                min-height: 280px;
+            }
+        }
     </style>
 
     <!-- Cursor override: must be last to win over Tailwind's runtime-injected stylesheet -->
@@ -340,33 +403,30 @@
     </div>
 
     <!-- ABOUT -->
-    <section id="about" class="py-24 px-4 max-w-7xl mx-auto border-x-4 border-black bg-white my-12 shadow-hard-lg">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-12">
-            <div class="md:col-span-4 reveal">
-                <div class="aspect-square bg-gray-200 border-4 border-black relative shadow-hard overflow-hidden group">
-                    <img src="assets/mockme.jpeg" alt="Yash Landge" class="w-full h-full object-cover object-center">
-                    <span
-                        class="absolute top-2 left-2 bg-neo-red text-white px-2 font-mono text-xs border border-black z-10">AVATAR.JPG</span>
-                </div>
+    <section id="about" class="py-24 px-4 max-w-7xl mx-auto my-12">
+        <h2 class="text-6xl font-black uppercase mb-8 tracking-tighter text-center">Who am I?</h2>
+
+        <div class="terminal-window reveal border-2 border-gray-700 rounded-lg overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+            <!-- macOS title bar -->
+            <div class="terminal-titlebar flex items-center gap-3 px-4 py-3 bg-[#1e1e1e] border-b border-gray-700">
+                <span class="block w-3 h-3 rounded-full bg-[#FF5F56]"></span>
+                <span class="block w-3 h-3 rounded-full bg-[#FFBD2E]"></span>
+                <span class="block w-3 h-3 rounded-full bg-[#27C93F]"></span>
+                <span class="flex-1 text-center font-mono text-xs text-gray-400 tracking-wide">visitor@yash-landge: ~</span>
             </div>
-            <div class="md:col-span-8 flex flex-col justify-center reveal">
-                <h2 class="text-6xl font-black uppercase mb-6">Who am I?</h2>
-                <p class="font-mono text-xl leading-relaxed mb-6">
-                    I am Yash Landge. A <span class="bg-neo-yellow px-1 border border-black">Designer × Developer</span>
-                    who crafts beautiful interfaces and brings them to life with code.
-                </p>
-                <p class="font-mono text-lg mb-8 text-gray-600 border-l-4 border-neo-purple pl-4">
-                    > My work focuses on clean design and smooth interactions.<br>
-                    > Building digital experiences that people love to use.<br>
-                    > Obsessed with Web3, AI, and pushing boundaries.
-                </p>
-                <div class="flex gap-4 flex-wrap">
-                    <div class="bg-neo-black text-white px-4 py-2 font-mono text-sm border-2 border-transparent">
-                        📍 LOCATION: INDIA
-                    </div>
-                    <div class="bg-neo-green text-black px-4 py-2 font-mono text-sm border-2 border-black">
-                        🟢 STATUS: OPEN TO OPPORTUNITIES
-                    </div>
+
+            <!-- Terminal body: split panes -->
+            <div class="terminal-body flex min-h-[420px]">
+                <!-- LEFT PANEL: Avatar -->
+                <div class="terminal-pane-avatar w-[33%] min-w-[200px] bg-[#1a1a1a] border-r border-gray-700 relative flex flex-col items-center justify-center p-6">
+                    <img src="assets/mockme.jpeg" alt="Yash Landge" class="w-full max-w-[220px] aspect-square object-cover object-center border border-gray-600">
+                    <span class="absolute top-4 left-4 bg-neo-red text-white px-2 py-0.5 font-mono text-[10px] border border-red-800 z-10">AVATAR.JPG</span>
+                </div>
+
+                <!-- RIGHT PANEL: Terminal text -->
+                <div class="terminal-pane-text flex-1 bg-[#0d0d0d] p-8 flex flex-col justify-center font-mono text-sm leading-relaxed">
+                    <div id="terminal-output" class="whitespace-pre-wrap"></div>
+                    <span id="terminal-cursor" class="inline-block w-[10px] h-[18px] bg-neo-green animate-blink ml-0.5 align-middle"></span>
                 </div>
             </div>
         </div>
@@ -1512,6 +1572,68 @@
                 });
         });
 
+
+        // Terminal Typewriter
+        (function () {
+            const output = document.getElementById('terminal-output');
+            const cursor = document.getElementById('terminal-cursor');
+            if (!output) return;
+
+            const lines = [
+                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">whoami</span>', delay: 800 },
+                { html: '<span class="term-white">I am Yash Landge. A <span class="term-label" style="background:#FBFF48;color:#000;padding:0 4px;">Designer × Developer</span> who crafts beautiful interfaces and brings them to life with code.</span>', delay: 60 },
+                { html: '', delay: 300 },
+                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">cat about.txt</span>', delay: 600 },
+                { html: '<span class="term-dim">&gt;</span> <span class="term-white">My work focuses on clean design and smooth interactions.</span>', delay: 30 },
+                { html: '<span class="term-dim">&gt;</span> <span class="term-white">Building digital experiences that people love to use.</span>', delay: 30 },
+                { html: '<span class="term-dim">&gt;</span> <span class="term-white">Obsessed with Web3, AI, and pushing boundaries.</span>', delay: 30 },
+                { html: '', delay: 300 },
+                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">cat status.txt</span>', delay: 600 },
+                { html: '<span class="term-dim">📍 LOCATION:</span> <span class="term-white">INDIA</span>', delay: 30 },
+                { html: '<span class="term-status-green">🟢 STATUS: OPEN TO OPPORTUNITIES</span>', delay: 30 },
+            ];
+
+            let started = false;
+
+            async function typeLine(html, charDelay) {
+                const wrapper = document.createElement('div');
+                wrapper.innerHTML = html;
+                output.appendChild(wrapper);
+                const text = wrapper.textContent;
+                wrapper.textContent = '';
+                for (let i = 0; i < text.length; i++) {
+                    wrapper.textContent += text[i];
+                    await new Promise(r => setTimeout(r, charDelay));
+                }
+            }
+
+            async function runTerminal() {
+                if (started) return;
+                started = true;
+                output.innerHTML = '';
+                for (const line of lines) {
+                    if (line.html === '') {
+                        output.innerHTML += '<br>';
+                        await new Promise(r => setTimeout(r, line.delay));
+                    } else {
+                        await typeLine(line.html, line.delay);
+                        await new Promise(r => setTimeout(r, 150));
+                    }
+                }
+            }
+
+            const termObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        runTerminal();
+                        termObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            const termSection = document.querySelector('.terminal-window');
+            if (termSection) termObserver.observe(termSection);
+        })();
 
         // GitHub Stats
         async function fetchGitHubStats() {
