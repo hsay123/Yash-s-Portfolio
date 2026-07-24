@@ -1584,18 +1584,23 @@
             const cursor = document.getElementById('terminal-cursor');
             if (!output) return;
 
+            const CMD_DELAY = 25;
+            const OUT_DELAY = 12;
+            const LINE_GAP = 120;
+            const BLANK_GAP = 100;
+
             const lines = [
-                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">whoami</span>', delay: 800 },
-                { html: '<span class="term-white">I am Yash Landge. A <span class="term-label" style="background:#FBFF48;color:#000;padding:0 4px;">Designer × Developer</span> who crafts beautiful interfaces and brings them to life with code.</span>', delay: 60 },
-                { html: '', delay: 300 },
-                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">cat about.txt</span>', delay: 600 },
-                { html: '<span class="term-dim">&gt;</span> <span class="term-white">My work focuses on clean design and smooth interactions.</span>', delay: 30 },
-                { html: '<span class="term-dim">&gt;</span> <span class="term-white">Building digital experiences that people love to use.</span>', delay: 30 },
-                { html: '<span class="term-dim">&gt;</span> <span class="term-white">Obsessed with Web3, AI, and pushing boundaries.</span>', delay: 30 },
-                { html: '', delay: 300 },
-                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">cat status.txt</span>', delay: 600 },
-                { html: '<span class="term-dim">📍 LOCATION:</span> <span class="term-white">INDIA</span>', delay: 30 },
-                { html: '<span class="term-status-green">🟢 STATUS: OPEN TO OPPORTUNITIES</span>', delay: 30 },
+                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">whoami</span>', delay: CMD_DELAY },
+                { html: '<span class="term-white">I am Yash Landge. A <span class="term-label" style="background:#FBFF48;color:#000;padding:0 4px;">Designer × Developer</span> who crafts beautiful interfaces and brings them to life with code.</span>', delay: OUT_DELAY },
+                { html: '', delay: BLANK_GAP },
+                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">cat about.txt</span>', delay: CMD_DELAY },
+                { html: '<span class="term-dim">&gt;</span> <span class="term-white">My work focuses on clean design and smooth interactions.</span>', delay: OUT_DELAY },
+                { html: '<span class="term-dim">&gt;</span> <span class="term-white">Building digital experiences that people love to use.</span>', delay: OUT_DELAY },
+                { html: '<span class="term-dim">&gt;</span> <span class="term-white">Obsessed with Web3, AI, and pushing boundaries.</span>', delay: OUT_DELAY },
+                { html: '', delay: BLANK_GAP },
+                { html: '<span class="term-prompt">visitor@yash-landge:~$</span> <span class="term-cmd">cat status.txt</span>', delay: CMD_DELAY },
+                { html: '<span class="term-dim">📍 LOCATION:</span> <span class="term-white">INDIA</span>', delay: OUT_DELAY },
+                { html: '<span class="term-status-green">🟢 STATUS: OPEN TO OPPORTUNITIES</span>', delay: OUT_DELAY },
             ];
 
             let started = false;
@@ -1622,7 +1627,7 @@
                         await new Promise(r => setTimeout(r, line.delay));
                     } else {
                         await typeLine(line.html, line.delay);
-                        await new Promise(r => setTimeout(r, 150));
+                        await new Promise(r => setTimeout(r, LINE_GAP));
                     }
                 }
             }
